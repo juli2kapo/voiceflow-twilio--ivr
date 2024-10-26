@@ -26,7 +26,7 @@ async function interact(caller, action) {
     const options = {
       method: 'POST',
       headers: {
-        'xi-api-key': 'sk_f17dd1a76e96fd32c1b58d1d0fe8dea62f6c168d4b528d06',
+        'xi-api-key': process.env.ELEVEN_LABS_API_KEY,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
