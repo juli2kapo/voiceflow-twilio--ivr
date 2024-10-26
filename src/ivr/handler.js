@@ -1,3 +1,4 @@
+const fs = require("fs");
 require('dotenv').config()
 const {
   VOICEFLOW_API_KEY,
@@ -14,6 +15,52 @@ const VOICEFLOW_PROJECT_ID = process.env.VOICEFLOW_PROJECT_ID || null
 let session = `${VOICEFLOW_VERSION_ID}.${createSession()}`
 
 async function interact(caller, action) {
+
+
+
+
+
+
+
+  async function getMP3(textToMake) {
+    const options = {
+      method: 'POST',
+      headers: {
+        'xi-api-key': 'sk_f17dd1a76e96fd32c1b58d1d0fe8dea62f6c168d4b528d06',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        text: textToMake,
+        language_code: "es",
+        voice_settings: { stability: 0.45, similarity_boost: 1 },
+        model_id: "eleven_turbo_v2_5",
+      }),
+    };
+
+    try {
+      const response = await fetch('https://api.elevenlabs.io/v1/text-to-speech/2Lb1en5ujrODDIqmp7F3', options);
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const arrayBuffer = await response.arrayBuffer(); // Await the ArrayBuffer conversion
+      const buffer = Buffer.from(arrayBuffer); // Convert ArrayBuffer to Buffer
+      const filePath = 'output.mp3';
+
+      fs.writeFileSync(filePath, buffer); // Save the buffer as an MP3 file
+      console.log(`Audio saved to ${filePath}`);
+
+    } catch (err) {
+      console.error('Error:', err); // Catch and log any errors
+    }
+  }
+
+
+
+
+
+
   const twiml = new VoiceResponse()
   // call the Voiceflow API with the user's name & request, get back a response
   const request = {
@@ -46,33 +93,49 @@ async function interact(caller, action) {
     switch (trace.type) {
       case 'text':
       case 'speak': {
-        agent.say(
-          trace.payload.message
-        )
+
+
+         await getMP3(trace.payload.message)
+        try{
+          agent.play("output.mp3")
+          // agent.say(
+            // {
+              // language: 'es-US', 
+            // },
+            // trace.payload.message
+          // )
+        }
+        catch(e){
+          console.log(e)
+        }
         break
       }
       case 'CALL': {
+    if(trace.payload){
         const { number } = JSON.parse(trace.payload)
-        console.log('Calling', number)
-        twiml.dial(number)
-        break
+      console.log('Calling', number)
+      twiml.dial(number)
+      break
+    }
       }
       case 'SMS': {
-        const { message } = JSON.parse(trace.payload)
-        console.log('Sending SMS', message)
-        console.log('To', caller)
-        console.log('From', TWILIO_PHONE_NUMBER)
+    if(trace.payload){
+      const { message } = JSON.parse(trace.payload)
+      console.log('Sending SMS', message)
+      console.log('To', caller)
+      console.log('From', TWILIO_PHONE_NUMBER)
 
-        SMS.messages
-          .create({ body: message, to: caller, from: TWILIO_PHONE_NUMBER })
-          .then((message) => {
-            console.log('Message sent, SID:', message.sid)
-          })
-          .catch((error) => {
-            console.error('Error sending message:', error)
-          })
-        saveTranscript(caller)
-        break
+      SMS.messages
+        .create({ body: message, to: caller, from: TWILIO_PHONE_NUMBER })
+        .then((message) => {
+        console.log('Message sent, SID:', message.sid)
+        })
+        .catch((error) => {
+        console.error('Error sending message:', error)
+        })
+      saveTranscript(caller)
+      break
+    }
       }
       case 'end': {
         saveTranscript(caller)

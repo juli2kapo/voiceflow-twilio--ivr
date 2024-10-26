@@ -5,7 +5,7 @@ const ivrRouter = require('./ivr/router')
 const router = new Router()
 
 router.get('/', async (req, res) => {
-  res.send('Voiceflow Twilio Integration is up and running')
+  res.send('Elykia API')
 })
 
 router.use('/ivr', twilio.webhook({ validate: false }), ivrRouter)
