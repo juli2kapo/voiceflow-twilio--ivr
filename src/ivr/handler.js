@@ -96,6 +96,7 @@ async function interact(caller, action) {
 
 
          await getMP3(trace.payload.message)
+         await getMP3("Buenas pa")
         try{
           agent.play("/public/output.mp3")
           // agent.say(
