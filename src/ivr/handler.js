@@ -46,7 +46,7 @@ async function interact(caller, action) {
 
       const arrayBuffer = await response.arrayBuffer(); // Await the ArrayBuffer conversion
       const buffer = Buffer.from(arrayBuffer); // Convert ArrayBuffer to Buffer
-      const filePath = 'output.mp3';
+      const filePath = '/home/ubuntu/twilioivr/voiceflow-twilio--ivr/public/output.mp3';
 
       fs.writeFileSync(filePath, buffer); // Save the buffer as an MP3 file
       console.log(`Audio saved to ${filePath}`);
@@ -97,7 +97,7 @@ async function interact(caller, action) {
 
          await getMP3(trace.payload.message)
         try{
-          agent.play("output.mp3")
+          agent.play("/public/output.mp3")
           // agent.say(
             // {
               // language: 'es-US', 
