@@ -80,7 +80,9 @@ async function interact(caller, action) {
     ? twiml
     : twiml.gather({
       language_code: 'es-US',
-      speechModel: 'deepgram_nova-2',
+      language: 'es-US',
+      enhanced: "true",
+      // speechModel: 'deepgram_nova-2',
       input: 'speech dtmf',
       numDigits: 1,
       speechTimeout: 'auto',
