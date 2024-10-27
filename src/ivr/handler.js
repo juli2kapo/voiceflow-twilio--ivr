@@ -79,6 +79,8 @@ async function interact(caller, action) {
   let agent = endTurn
     ? twiml
     : twiml.gather({
+      language_code: 'es-US',
+      speechModel: 'googlev2_telephony',
       input: 'speech dtmf',
       numDigits: 1,
       speechTimeout: 'auto',
@@ -86,7 +88,8 @@ async function interact(caller, action) {
       profanityFilter: false,
       actionOnEmptyResult: true,
       method: 'POST',
-    })
+    }
+  )
 
   // loop through the response
   for (const trace of response.data) {
