@@ -120,7 +120,6 @@ router.post('/createTurns', (req, res) => {
             const turns = results.filter(x=>new Date(x.fromHour).getTime() >= new Date(fechaInicio).getTime() && new Date(x.toHour).getTime() <= new Date(fechaFin).getTime());
             console.log("turns",turns)
             console.log("testFechaInicio",new Date(fechaInicio).getTime())
-            console.log("testTurns", new Date(turns[0].fromHour).getTime())
             console.log("fechaInicio",fechaInicio)
             const sortedTables = tables.filter(table =>
                 turns.filter(
