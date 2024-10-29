@@ -172,10 +172,10 @@ router.post('/checkName', (req, res) => {
             console.error(err);
             res.status(500).json('Error fetching turns');
         } else {
-            console.log("results",results);
+            
             let futureTurns = results.filter(turn => new Date(turn.fromHour).getTime() >= new Date().getTime());
-            console.log("futureTurns",futureTurns);
-            const turnNames = results.map(turn => turn.responsibleName.toLowerCase().normalize());
+            
+            const turnNames = futureTurns.map(turn => turn.responsibleName.toLowerCase().normalize());
             console.log("turnNames",turnNames);
             const overlap = possibleNames.filter(name => turnNames.includes(name));
             console.log("overlap",overlap);
@@ -184,7 +184,7 @@ router.post('/checkName', (req, res) => {
                 return;
             }
             else{
-                const turnsFromName = results.filter(turn => turn.responsibleName.toLowerCase().normalize().includes(possibleNames[0]));
+                const turnsFromName = futureTurns.filter(turn => turn.responsibleName.toLowerCase().normalize().includes(possibleNames[0]));
                 res.json({overlap: [], turns: turnsFromName, usesTurns: true, fixedName: possibleNames[0]});
             }
         }
