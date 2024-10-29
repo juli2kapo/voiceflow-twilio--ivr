@@ -108,6 +108,8 @@ router.post('/createTurns', (req, res) => {
                 return;
             }
             console.log("turns",turns)
+            console.log("testFechaInicio",new Date(fechaInicio).getTime())
+            console.log("testTurns", new Date(turn[0].startDate).getTime())
             console.log("filteredTurns", turns.filter(
                 turn=>new Date(turn.startDate).getTime()==new Date(fechaInicio).getTime() && turn.table_id==x.id
             ))
