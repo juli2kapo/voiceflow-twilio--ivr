@@ -113,7 +113,7 @@ router.post('/createTurns', (req, res) => {
             console.log("fechaInicio",fechaInicio)
             const sortedTables = tables.filter(table =>
                 turns.filter(
-                    turn=>new Date(turn.fromHour).getTime()==new Date(fechaInicio).getTime() && turn.table_id==x.id
+                    turn=>new Date(turn.fromHour).getTime()==new Date(fechaInicio).getTime() && turn.table_id==table.id
                 ).length==0
             ).sort((a, b) => a.seats - b.seats);
             if(sortedTables && sortedTables.length > 0) {
