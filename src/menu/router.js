@@ -58,7 +58,7 @@ router.post('/getAvailableTurns', (req, res) => {
                 res.status(500).json('Error fetching turns');
                 return;
             }
-
+            
             const sortedTables = tables.sort((a, b) => a.seats - b.seats);
             const takenTurnsForDay = sortedTables.reduce((acc, element) => {
                 return acc.concat(turns.filter(turn => turn.table_id === element.id));
@@ -66,8 +66,13 @@ router.post('/getAvailableTurns', (req, res) => {
 
             console.log("takenTurnsForDay",takenTurnsForDay)
             console.log("turns",turns)
-            // console.log("hora",new Date(turns[0].fromHour).getHours())
+            if(turns.length > 0){
 
+                console.log("turns",turns)
+                console.log("new Date(turn.fromHour).getHours()",new Date(turns[0].fromHour).getHours())
+                
+                
+            }
             const availableHours = workHours.filter(hour => {
                 return takenTurnsForDay.filter(turn => new Date(turn.fromHour).getHours() == hour).length < sortedTables.length;
             });
