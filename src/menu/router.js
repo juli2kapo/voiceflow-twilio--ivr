@@ -74,12 +74,12 @@ router.post('/getAvailableTurns', (req, res) => {
                 
                 
             }
-            const availableHours = workHours.filter(hour => {
+            const temp = workHours.filter(hour => {
                 return takenTurnsForDay.filter(turn => new Date(turn.fromHour).getHours() == hour).length < sortedTables.length;
             });
-            const coso = availableHours.slice(0, 5)
+            const availableHours = temp.slice(0, 5)
             //limit available hourse to 5 entries
-            res.json({ coso });
+            res.json({ availableHours });
         });
     });
 });
