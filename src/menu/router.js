@@ -52,7 +52,7 @@ router.post('/getAvailableTurns', (req, res) => {
             return;
         }
 
-        db.all(turnsQuery, [fechaInicio, fechaFin], (err, turns) => {
+        db.all(turnsQuery, (err, turns) => {
             if (err) {
                 console.error(err);
                 res.status(500).json('Error fetching turns');
