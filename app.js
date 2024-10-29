@@ -1,6 +1,8 @@
 const express = require('express');
 const logger = require('morgan');
 const bodyParser = require('body-parser');
+var multer = require('multer');
+var forms = multer();
 
 const router = require('./src/router');
 
@@ -8,6 +10,7 @@ const app = express();
 
 app.use(logger('dev'));
 app.use(bodyParser.json());
+app.use(forms.array()); 
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // Serve static files from the public directory

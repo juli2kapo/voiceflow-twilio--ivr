@@ -112,4 +112,30 @@ router.post('/createTable', (req, res) => {
 });
 
 
+
+router.post('/checkName', (req, res) => {
+    const { responsibleName } = req.body;
+    const possibleNames = responsibleName.toLowerCase().normalize().split(' ');
+    const query = `SELECT * FROM turns WHERE fromHour >= ?`;
+    db.all(query, [new Date().toISOString()], (err, results) => {
+        if (err) {
+            console.error(err);
+            res.status(500).send('Error fetching turns');
+        } else {
+            
+            const turnNames = results.map(turn => turn.responsibleName.toLowerCase().normalize());
+            const overlap = possibleNames.filter(name => turnNames.includes(name));
+            if (overlap.length > 1){
+                res.json({overlap: overlap, turns: [], usesTurns: false, fixedName: responsibleName});
+                return;
+            }
+            else{
+                const turnsFromName = results.filter(turn => turn.responsibleName.toLowerCase().normalize().includes(possibleNames[0]));
+                res.json({overlap: [], turns: turnsFromName, usesTurns: true, fixedName: possibleNames[0]});
+            }
+        }
+    });
+});
+
+
 module.exports = router;
