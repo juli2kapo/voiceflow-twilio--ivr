@@ -82,7 +82,7 @@ async function interact(caller, action) {
       language_code: 'es-US',
       language: 'es-US',
       enhanced: "true",
-      // speechModel: 'deepgram_nova-2',
+      speechModel: 'deepgram_nova-2',
       input: 'speech dtmf',
       numDigits: 1,
       speechTimeout: 'auto',
