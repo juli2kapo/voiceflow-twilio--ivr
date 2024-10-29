@@ -14,7 +14,7 @@ router.post('/getAllTurns', (req, res) => {
     const fechaInicio = new Date(startDate);
     const fechaFin = new Date(endDate);
     const query = `SELECT * FROM turns`;
-    db.all(query, [fechaInicio, fechaFin], (err, results) => {
+    db.all(query, (err, results) => {
         if (err) {
             console.error(err);
             res.status(500).json('Error fetching turns');
@@ -29,7 +29,7 @@ router.post('/getTurns', (req, res) => {
     const fechaInicio = new Date(startDate);
     const fechaFin = new Date(endDate);
     const query = `SELECT * FROM turns`;
-    db.all(query, [fechaInicio, fechaFin], (err, results) => {
+    db.all(query, (err, results) => {
         if (err) {
             console.error(err);
             res.status(500).json('Error fetching turns');
@@ -111,7 +111,7 @@ router.post('/createTurns', (req, res) => {
             return;
         }
 
-        db.all(turnsQuery, [fechaInicio, fechaFin], (err, results) => {
+        db.all(turnsQuery, (err, results) => {
             if(err) {
                 console.error(err);
                 res.status(500).json('Error fetching turns');
