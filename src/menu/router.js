@@ -28,13 +28,14 @@ router.post('/getTurns', (req, res) => {
     const { startDate, endDate } = req.body;
     const fechaInicio = new Date(startDate);
     const fechaFin = new Date(endDate);
-    const query = `SELECT * FROM turns WHERE fromHour >= ? AND toHour <= ?`;
+    const query = `SELECT * FROM turns`;
     db.all(query, [fechaInicio, fechaFin], (err, results) => {
         if (err) {
             console.error(err);
             res.status(500).json('Error fetching turns');
         } else {
-            res.json(results);
+            const possibleTurns = results.filter(x=>new Date(x.fromHour).getTime() >= new Date(fechaInicio).getTime() && new Date(x.toHour).getTime() <= new Date(fechaFin).getTime());
+            res.json(possibleTurns);
         }
     });
 });
@@ -102,7 +103,7 @@ router.post('/createTurns', (req, res) => {
     const fechaInicio = new Date(startDate);
     const fechaFin = new Date(endDate);
     const tablesQuery = `SELECT * FROM tables WHERE seats >= ?`;
-    const turnsQuery = `SELECT * FROM turns WHERE fromHour >= ? AND toHour <= ?`;
+    const turnsQuery = `SELECT * FROM turns`;
     db.all(tablesQuery, [amountOfPeople], (err, tables) => {
         if (err) {
             console.error(err);
@@ -110,12 +111,13 @@ router.post('/createTurns', (req, res) => {
             return;
         }
 
-        db.all(turnsQuery, [fechaInicio, fechaFin], (err, turns) => {
+        db.all(turnsQuery, [fechaInicio, fechaFin], (err, results) => {
             if(err) {
                 console.error(err);
                 res.status(500).json('Error fetching turns');
                 return;
             }
+            const turns = results.filter(x=>new Date(x.fromHour).getTime() >= new Date(fechaInicio).getTime() && new Date(x.toHour).getTime() <= new Date(fechaFin).getTime());
             console.log("turns",turns)
             console.log("testFechaInicio",new Date(fechaInicio).getTime())
             console.log("testTurns", new Date(turns[0].fromHour).getTime())
@@ -164,14 +166,15 @@ router.post('/checkName', (req, res) => {
     const { responsibleName } = req.body;
     const possibleNames = responsibleName.toLowerCase().normalize().split(' ');
     console.log("possibleNames",possibleNames);
-    const query = `SELECT * FROM turns WHERE fromHour >= ?`;
-    db.all(query, [new Date().toISOString()], (err, results) => {
+    const query = `SELECT * FROM turns`;
+    db.all(query, (err, results) => {
         if (err) {
             console.error(err);
             res.status(500).json('Error fetching turns');
         } else {
             console.log("results",results);
-
+            let futureTurns = results.filter(turn => new Date(turn.fromHour).getTime() >= new Date().getTime());
+            console.log("futureTurns",futureTurns);
             const turnNames = results.map(turn => turn.responsibleName.toLowerCase().normalize());
             console.log("turnNames",turnNames);
             const overlap = possibleNames.filter(name => turnNames.includes(name));
