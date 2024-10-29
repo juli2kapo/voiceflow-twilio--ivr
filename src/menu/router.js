@@ -8,6 +8,20 @@ const workHours = [
     "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23"
 ];
 
+
+router.post('/getAllTurns', (req, res) => {
+    const { startDate, endDate } = req.body;
+    const query = `SELECT * FROM turns`;
+    db.all(query, [startDate, endDate], (err, results) => {
+        if (err) {
+            console.error(err);
+            res.status(500).json('Error fetching turns');
+        } else {
+            res.json(results);
+        }
+    });
+});
+
 router.post('/getTurns', (req, res) => {
     const { startDate, endDate } = req.body;
     const query = `SELECT * FROM turns WHERE fromHour >= ? AND toHour <= ?`;
