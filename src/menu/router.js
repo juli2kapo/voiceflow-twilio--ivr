@@ -170,6 +170,8 @@ router.post('/checkName', (req, res) => {
             console.error(err);
             res.status(500).json('Error fetching turns');
         } else {
+            console.log("results",results);
+
             const turnNames = results.map(turn => turn.responsibleName.toLowerCase().normalize());
             console.log("turnNames",turnNames);
             const overlap = possibleNames.filter(name => turnNames.includes(name));
