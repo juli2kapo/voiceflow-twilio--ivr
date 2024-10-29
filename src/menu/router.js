@@ -42,7 +42,7 @@ router.post('/getTurns', (req, res) => {
 router.post('/getAvailableTurns', (req, res) => {
     const { startDate, endDate, amountOfPeople } = req.body;
     const tablesQuery = `SELECT * FROM tables WHERE seats >= ?`;
-    const turnsQuery = `SELECT * FROM turns WHERE fromHour >= ? AND toHour <= ?`;
+    const turnsQuery = `SELECT * FROM turns`;
     const fechaInicio = new Date(startDate);
     const fechaFin = new Date(endDate);
     db.all(tablesQuery, [amountOfPeople], (err, tables) => {
@@ -58,7 +58,7 @@ router.post('/getAvailableTurns', (req, res) => {
                 res.status(500).json('Error fetching turns');
                 return;
             }
-            
+
             const sortedTables = tables.sort((a, b) => a.seats - b.seats);
             const takenTurnsForDay = sortedTables.reduce((acc, element) => {
                 return acc.concat(turns.filter(turn => turn.table_id === element.id));
