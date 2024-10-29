@@ -11,8 +11,10 @@ const workHours = [
 
 router.post('/getAllTurns', (req, res) => {
     const { startDate, endDate } = req.body;
+    const fechaInicio = new Date(startDate);
+    const fechaFin = new Date(endDate);
     const query = `SELECT * FROM turns`;
-    db.all(query, [startDate, endDate], (err, results) => {
+    db.all(query, [fechaInicio, fechaFin], (err, results) => {
         if (err) {
             console.error(err);
             res.status(500).json('Error fetching turns');
@@ -24,8 +26,10 @@ router.post('/getAllTurns', (req, res) => {
 
 router.post('/getTurns', (req, res) => {
     const { startDate, endDate } = req.body;
+    const fechaInicio = new Date(startDate);
+    const fechaFin = new Date(endDate);
     const query = `SELECT * FROM turns WHERE fromHour >= ? AND toHour <= ?`;
-    db.all(query, [startDate, endDate], (err, results) => {
+    db.all(query, [fechaInicio, fechaFin], (err, results) => {
         if (err) {
             console.error(err);
             res.status(500).json('Error fetching turns');
@@ -39,7 +43,8 @@ router.post('/getAvailableTurns', (req, res) => {
     const { startDate, endDate, amountOfPeople } = req.body;
     const tablesQuery = `SELECT * FROM tables WHERE seats >= ?`;
     const turnsQuery = `SELECT * FROM turns WHERE fromHour >= ? AND toHour <= ?`;
-
+    const fechaInicio = new Date(startDate);
+    const fechaFin = new Date(endDate);
     db.all(tablesQuery, [amountOfPeople], (err, tables) => {
         if (err) {
             console.error(err);
@@ -47,7 +52,7 @@ router.post('/getAvailableTurns', (req, res) => {
             return;
         }
 
-        db.all(turnsQuery, [startDate, endDate], (err, turns) => {
+        db.all(turnsQuery, [fechaInicio, fechaFin], (err, turns) => {
             if (err) {
                 console.error(err);
                 res.status(500).json('Error fetching turns');
@@ -70,8 +75,10 @@ router.post('/getAvailableTurns', (req, res) => {
 
 router.post('/deleteTurns', (req, res) => {
     const { startDate, endDate } = req.body;
+    const fechaInicio = new Date(startDate);
+    const fechaFin = new Date(endDate);
     const query = `DELETE FROM turns WHERE fromHour >= ? AND toHour <= ?`;
-    db.run(query, [startDate, endDate], (err) => {
+    db.run(query, [fechaInicio, fechaFin], (err) => {
         if (err) {
             console.error(err);
             res.status(500).json('Error deleting turns');
@@ -83,6 +90,8 @@ router.post('/deleteTurns', (req, res) => {
 
 router.post('/createTurns', (req, res) => {
     const { startDate, endDate, amountOfPeople, responsibleName } = req.body;
+    const fechaInicio = new Date(startDate);
+    const fechaFin = new Date(endDate);
     const tablesQuery = `SELECT * FROM tables WHERE seats >= ?`;
 
     db.all(tablesQuery, [amountOfPeople], (err, tables) => {
@@ -95,7 +104,7 @@ router.post('/createTurns', (req, res) => {
         const sortedTables = tables.sort((a, b) => a.seats - b.seats);
         if(sortedTables && sortedTables.length > 0) {
             const insertQuery = `INSERT INTO turns (amountOfPeople, table_id, fromHour, toHour, responsibleName) VALUES (?, ?, ?, ?, ?)`;
-            db.run(insertQuery, [amountOfPeople, sortedTables[0].id, startDate, endDate, responsibleName], (err) => {
+            db.run(insertQuery, [amountOfPeople, sortedTables[0].id, fechaInicio, fechaFin, responsibleName], (err) => {
                 if (err) {
                     console.error(err);
                     res.status(500).json('Error creating turn');
