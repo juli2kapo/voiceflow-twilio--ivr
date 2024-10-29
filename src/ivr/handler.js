@@ -165,7 +165,7 @@ exports.interaction = async (called, caller, query = '', digit = null) => {
     console.log('Digit:', digit)
   } else {
     // twilio always ends everythings with a period, we remove it
-    query = query.slice(0, -1)
+    // query = query.slice(0, -1)
     action = query.trim() ? { type: 'text', payload: query } : null
     console.log('Utterance:', query)
   }
