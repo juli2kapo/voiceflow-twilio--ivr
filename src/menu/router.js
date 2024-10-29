@@ -14,7 +14,7 @@ router.post('/getTurns', (req, res) => {
     db.all(query, [startDate, endDate], (err, results) => {
         if (err) {
             console.error(err);
-            res.status(500).send('Error fetching turns');
+            res.status(500).json('Error fetching turns');
         } else {
             res.json(results);
         }
@@ -29,14 +29,14 @@ router.post('/getAvailableTurns', (req, res) => {
     db.all(tablesQuery, [amountOfPeople], (err, tables) => {
         if (err) {
             console.error(err);
-            res.status(500).send('Error fetching tables');
+            res.status(500).json('Error fetching tables');
             return;
         }
 
         db.all(turnsQuery, [startDate, endDate], (err, turns) => {
             if (err) {
                 console.error(err);
-                res.status(500).send('Error fetching turns');
+                res.status(500).json('Error fetching turns');
                 return;
             }
 
@@ -60,9 +60,9 @@ router.post('/deleteTurns', (req, res) => {
     db.run(query, [startDate, endDate], (err) => {
         if (err) {
             console.error(err);
-            res.status(500).send('Error deleting turns');
+            res.status(500).json('Error deleting turns');
         } else {
-            res.send('Turns deleted');
+            res.json('Turns deleted');
         }
     });
 });
@@ -74,7 +74,7 @@ router.post('/createTurns', (req, res) => {
     db.all(tablesQuery, [amountOfPeople], (err, tables) => {
         if (err) {
             console.error(err);
-            res.status(500).send('Error fetching tables');
+            res.status(500).json('Error fetching tables');
             return;
         }
 
@@ -84,14 +84,14 @@ router.post('/createTurns', (req, res) => {
             db.run(insertQuery, [amountOfPeople, sortedTables[0].id, startDate, endDate, responsibleName], (err) => {
                 if (err) {
                     console.error(err);
-                    res.status(500).send('Error creating turn');
+                    res.status(500).json('Error creating turn');
                 } else {
-                    res.send('Turns created');
+                    res.json('Reserva creada');
                 }
             });
         }
         else {
-            res.status(500).send('No tables available');
+            res.json('No hay mesas disponibles');
         }
     });
 });
@@ -104,9 +104,9 @@ router.post('/createTable', (req, res) => {
     db.run(insertTableQuery, [name, seats, 'available', new Date(), new Date()], (err) => {
         if (err) {
             console.error(err);
-            res.status(500).send('Error creating table');
+            res.status(500).json('Error creating table');
         } else {
-            res.send('Table created');
+            res.json('Table created');
         }
     });
 });
@@ -120,7 +120,7 @@ router.post('/checkName', (req, res) => {
     db.all(query, [new Date().toISOString()], (err, results) => {
         if (err) {
             console.error(err);
-            res.status(500).send('Error fetching turns');
+            res.status(500).json('Error fetching turns');
         } else {
             
             const turnNames = results.map(turn => turn.responsibleName.toLowerCase().normalize());
