@@ -13,7 +13,7 @@ function dropTables() {
   
   function createTables() {
     db.serialize(() => {
-      db.run(`CREATE TABLE tables (
+      db.run(`CREATE TABLE IF NOT EXISTS tables (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL,
         seats INTEGER NOT NULL,
@@ -22,7 +22,7 @@ function dropTables() {
         updatedAt DATETIME NOT NULL
       )`);
   
-      db.run(`CREATE TABLE turns (
+      db.run(`CREATE TABLE IF NOT EXISTS turns (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         table_id INTEGER NOT NULL,
         amountOfPeople INTEGER NOT NULL,
