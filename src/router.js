@@ -2,6 +2,8 @@ const twilio = require('twilio')
 const Router = require('express').Router
 const express = require('express')
 const ivrRouter = require('./ivr/router')
+const menuRouter = require("./menu/router")
+
 
 const router = new Router()
 
@@ -10,6 +12,9 @@ router.get('/', async (req, res) => {
 })
 
 router.use('/public', express.static('public'))
+
+router.use("/menu", menuRouter);
+
 
 router.use('/ivr', twilio.webhook({ validate: false }), ivrRouter)
 

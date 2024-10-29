@@ -8,7 +8,7 @@ const app = express();
 
 app.use(logger('dev'));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: true }));
 
 // Serve static files from the public directory
 app.use('/public', express.static('public'));
