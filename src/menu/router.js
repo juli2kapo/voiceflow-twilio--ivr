@@ -121,7 +121,7 @@ router.post('/createTurns', (req, res) => {
                 });
             }
             else {
-                res.json('No hay mesas disponibles');
+                res.json('No hay mesas disponibles para la fecha seleccionada');
             }
         })
     });

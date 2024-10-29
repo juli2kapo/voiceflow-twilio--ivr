@@ -35,7 +35,7 @@ function dropTables() {
   }
   
   // Drop and recreate tables if needed
-  const shouldDropTables = false; // Set this to true if you want to drop tables
+  const shouldDropTables = true; // Set this to true if you want to drop tables
   if (shouldDropTables) {
     dropTables(createTables);
   } else {
