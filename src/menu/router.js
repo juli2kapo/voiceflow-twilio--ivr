@@ -84,11 +84,11 @@ router.post('/getAvailableTurns', (req, res) => {
 });
 
 router.post('/deleteTurns', (req, res) => {
-    const { startDate, endDate } = req.body;
+    const { startDate, endDate, responsibleName } = req.body;
     const fechaInicio = new Date(startDate);
     const fechaFin = new Date(endDate);
-    const query = `DELETE FROM turns WHERE fromHour >= ? AND toHour <= ?`;
-    db.run(query, [fechaInicio, fechaFin], (err) => {
+    const query = `DELETE FROM turns WHERE fromHour == ? AND toHour == ? AND responsibleName = ?`;
+    db.run(query, [fechaInicio.getTime(), fechaFin.getTime(), responsibleName], (err) => {
         if (err) {
             console.error(err);
             res.status(500).json('Error deleting turns');
@@ -180,13 +180,13 @@ router.post('/checkName', (req, res) => {
             const overlap = possibleNames.filter(name => turnNames.includes(name));
             console.log("overlap",overlap);
             if (overlap.length > 1){
-                res.json({overlap: overlap, turns: [], usesTurns: false, fixedName: responsibleName});
+                res.json({overlap: overlap, turns: [], usesTurns: 0, fixedName: responsibleName});
                 return;
             }
             else{
                 const turnsFromName = futureTurns.filter(turn => turn.responsibleName.toLowerCase().normalize().includes(possibleNames[0]));
                 const turnHours = turnsFromName.map(turn => new Date(turn.fromHour).toISOString());
-                res.json({overlap: [], turns: turnHours, usesTurns: true, fixedName: possibleNames[0]});
+                res.json({overlap: [], turns: turnHours, usesTurns: 1, fixedName: possibleNames[0]});
             }
         }
     });
