@@ -185,7 +185,8 @@ router.post('/checkName', (req, res) => {
             }
             else{
                 const turnsFromName = futureTurns.filter(turn => turn.responsibleName.toLowerCase().normalize().includes(possibleNames[0]));
-                res.json({overlap: [], turns: turnsFromName, usesTurns: true, fixedName: possibleNames[0]});
+                const turnHours = turnsFromName.map(turn => new Date(turn.fromHour).toISOString());
+                res.json({overlap: [], turns: turnHours, usesTurns: true, fixedName: possibleNames[0]});
             }
         }
     });
