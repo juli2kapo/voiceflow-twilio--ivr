@@ -1,6 +1,7 @@
 const sqlite3 = require('sqlite3').verbose();
 const { Router } = require('express');
 const db = require('./db');
+const fs = require("fs");
 
 const router = new Router();
 
@@ -192,5 +193,46 @@ router.post('/checkName', (req, res) => {
     });
 });
 
+// router.get("/createMP3",(req,res)=>{
+//     async function getMP3(textToMake) {
+//         const options = {
+//           method: 'POST',
+//           headers: {
+//             'xi-api-key': process.env.ELEVEN_LABS_API_KEY,
+//             'Content-Type': 'application/json',
+//           },
+//           body: JSON.stringify({
+//             text: textToMake,
+//             language_code: "es",
+//             voice_settings: { stability: 0.45, similarity_boost: 1 },
+//             model_id: "eleven_turbo_v2_5",
+//           }),
+//         };
+    
+//         try {
+//           const response = await fetch('https://api.elevenlabs.io/v1/text-to-speech/2Lb1en5ujrODDIqmp7F3', options);
+    
+//           if (!response.ok) {
+//             throw new Error(`HTTP error! status: ${response.status}`);
+//           }
+    
+//           const arrayBuffer = await response.arrayBuffer(); // Await the ArrayBuffer conversion
+//           const buffer = Buffer.from(arrayBuffer); // Convert ArrayBuffer to Buffer
+//         //   const filePath = '/home/ubuntu/twilioivr/voiceflow-twilio--ivr/public/output.mp3';
+//           const filePath = "output.mp3"
+    
+//           fs.writeFileSync(filePath, buffer); // Save the buffer as an MP3 file
+//           console.log(`Audio saved to ${filePath}`);
+    
+//         } catch (err) {
+//           console.error('Error:', err); // Catch and log any errors
+//         }
+//       }
+
+
+//     const text = "Muchas gracias por comunicarte con Elykia, que tengas un lindo dia";
+//     getMP3(text);
+//     return res.json("MP3 created")
+// })
 
 module.exports = router;

@@ -98,11 +98,15 @@ async function interact(caller, action) {
     switch (trace.type) {
       case 'text':
       case 'speak': {
-
-
-         await getMP3(trace.payload.message)
         try{
-          agent.play("/public/output.mp3")
+          if(createdMP3s.has(trace.payload.message)){
+            console.log('Playing MP3')
+            agent.play(`/public/${createdMP3s.get(trace.payload.message)}`)
+          }
+          else{
+            await getMP3(trace.payload.message)
+            agent.play("/public/output.mp3")
+          }
           // agent.say(
             // {
               // language: 'es-US', 
