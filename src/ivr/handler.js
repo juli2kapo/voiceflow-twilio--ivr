@@ -85,7 +85,7 @@ async function interact(caller, action) {
       speechModel: 'deepgram_nova-2',
       input: 'speech dtmf',
       numDigits: 1,
-      speechTimeout: 2,
+      timeout: 1.5,
       action: '/ivr/interaction',
       profanityFilter: false,
       actionOnEmptyResult: true,
