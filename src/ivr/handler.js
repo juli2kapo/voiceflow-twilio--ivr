@@ -114,11 +114,14 @@ async function interact(caller, action) {
       case 'text':
       case 'speak': {
         try{
+          console.log('Playing MP3')
+          console.log(trace.payload.message)
           if(createdMP3s.has(trace.payload.message)){
-            console.log('Playing MP3')
+            console.log('Fond MP3')
             agent.play(`/public/${createdMP3s.get(trace.payload.message)}`)
           }
           else{
+            console.log('Not Found MP3')
             await getMP3(trace.payload.message)
             agent.play("/public/output.mp3")
           }
