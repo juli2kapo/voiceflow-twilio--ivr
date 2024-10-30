@@ -13,7 +13,22 @@ const axios = require('axios')
 const VOICEFLOW_VERSION_ID = process.env.VOICEFLOW_VERSION_ID || 'development'
 const VOICEFLOW_PROJECT_ID = process.env.VOICEFLOW_PROJECT_ID || null
 let session = `${VOICEFLOW_VERSION_ID}.${createSession()}`
-
+const createdMP3s = new Map([
+  ['Hola buenos dias, bienvenido al restaurante Elykia, como puedo ayudarlo?', 'FirstWelcome.mp3'],
+  ['¿Para qué día y hora quiere la reserva?', 'GetDayAndHour.mp3'],
+  ['¿Para cuánta gente reservo la mesa?', 'GetPeople.mp3'],
+  ['¿A qué hora quiere que sea la reserva?', 'GetHour.mp3'],
+  ['¿Bajo qué nombre desea colocar la reserva?', 'GetName.mp3'],
+  ['Entiendo tu situación, ahora mismo te podríamos redirigir a personal competente del restaunte si esta no fuese una demo. ¿Te puedo ayudar en algo más?', 'NotReclamo.mp3'],
+  ['Esto es una demo y en Elykia no hacemos comida, pero si lo haríamos podrías pedir ahora mismo. ¿En qué más puedo ayudarte?', 'NotDelivery.mp3'],
+  ['¿Hay algo más con lo que pueda ayudarte?', 'QuestionVariation1.mp3'],
+  ['Disculpame, para buscar tu turno necesito que me digas el nombre bajo el que esta la reserva', 'MissingName.mp3'],
+  ['Disculpa, no encontré ninguna reserva bajo ese nombre, ¿podría ser que este bajo otro nombre?', 'NoReserva.mp3'],
+  ['¿Puedo ayudarlo con algo mas?', 'QuestionVariation2.mp3'],
+  ['Ahora mismo no contamos con mesas para esa cantidad de gente, al ser una demo son mesas simuladas y no podemos juntarlas ni hacer más ¿Puedo ayudarte con algo mas?', 'NoMesas.mp3'],
+  ['Cuando querria agendar el nuevo turno y para cuantas personas seria?', 'GetDayHourAndPeople.mp3'],
+  ['Muchas gracias por comunicarte con Elykia, que tengas un lindo dia', 'Despedida.mp3'],
+]);
 async function interact(caller, action) {
 
 
