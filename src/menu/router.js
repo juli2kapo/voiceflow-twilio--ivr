@@ -219,7 +219,7 @@ router.get("/createMP3",(req,res)=>{
             'xi-api-key': process.env.ELEVEN_LABS_API_KEY,
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({
+          body: JSON.stringif({
             text: textToMake,
             language_code: "es",
             voice_settings: { stability: 0.45, similarity_boost: 1 },
@@ -255,5 +255,18 @@ router.get("/createMP3",(req,res)=>{
     })
     return res.json("MP3 created")
 })
+
+router.get('/deleteAllTurns', (req, res) => {
+    const query = `DELETE FROM turns`;
+    db.run(query, (err) => {
+        if (err) {
+            console.error(err);
+            res.status(500).json('Error deleting all turns');
+        } else {
+            res.json('All turns deleted');
+        }
+    });
+});
+
 
 module.exports = router;
