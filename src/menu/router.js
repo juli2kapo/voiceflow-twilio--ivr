@@ -123,10 +123,10 @@ router.post('/deleteTurns', (req, res) => {
 router.post('/createTurns', (req, res) => {
     const { startDate, endDate, amountOfPeople, responsibleName } = req.body;
     console.log("body",req.body)
-    console.log("toolCalls",req.body.toolCalls)
-    console.log("toolCallList",req.body.toolCallList)
-    console.log("artifact.messages",req.body.artifact.messages)
-    
+    console.log("message.toolCalls",req.body.message.toolCalls)
+    console.log("toolCallList",req.body.message.toolCallList)
+    console.log("artifact.messages",req.body.message.artifact.messages)
+
     const fechaInicio = new Date(startDate);
     const fechaFin = new Date(endDate);
     const tablesQuery = `SELECT * FROM tables WHERE seats >= ?`;
