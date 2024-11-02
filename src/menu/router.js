@@ -122,6 +122,7 @@ router.post('/deleteTurns', (req, res) => {
 
 router.post('/createTurns', (req, res) => {
     const { startDate, endDate, amountOfPeople, responsibleName } = req.body;
+    console.log("message.toolCalls.function",req.body.message.toolCalls.function)
     console.log("message.toolCalls.function.arguments",req.body.message.toolCalls.function.arguments)
     const fechaInicio = new Date(startDate);
     const fechaFin = new Date(endDate);
