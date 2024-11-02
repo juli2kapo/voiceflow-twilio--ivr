@@ -38,7 +38,16 @@ router.post('/getAllTurns', (req, res) => {
             console.error(err);
             res.status(500).json('Error fetching turns');
         } else {
-            res.json(results);
+            res.json(
+                {
+                "results": [
+                    {
+                        "toolCallId":"",
+                        "result":results
+                    }
+                ]
+                }
+        );
         }
     });
 });
@@ -54,7 +63,18 @@ router.post('/getTurns', (req, res) => {
             res.status(500).json('Error fetching turns');
         } else {
             const possibleTurns = results.filter(x=>new Date(x.fromHour).getTime() >= new Date(fechaInicio).getTime() && new Date(x.toHour).getTime() <= new Date(fechaFin).getTime());
-            res.json(possibleTurns);
+            res.json(
+                
+                
+                {
+                    "results": [
+                        {
+                            "toolCallId":"",
+                            "result":possibleTurns
+                        }
+                    ]
+                    }
+                );
         }
     });
 });
@@ -100,7 +120,14 @@ router.post('/getAvailableTurns', (req, res) => {
             });
             const availableHours = temp.slice(0, 3)
             //limit available hourse to 5 entries
-            res.json({ availableHours });
+            res.json({
+                "results": [
+                    {
+                        "toolCallId":"",
+                        "result":availableHours
+                    }
+                ]
+                });
         });
     });
 });
@@ -115,7 +142,14 @@ router.post('/deleteTurns', (req, res) => {
             console.error(err);
             res.status(500).json('Error deleting turns');
         } else {
-            res.json('Turns deleted');
+            res.json({
+                "results": [
+                    {
+                        "toolCallId":"",
+                        "result":"Turns deleted"
+                    }
+                ]
+            });
         }
     });
 });
@@ -158,13 +192,27 @@ router.post('/createTurns', (req, res) => {
                         console.error(err);
                         res.status(500).json('Error creating turn');
                     } else {
-                        res.json('Reserva creada');
+                        res.json({
+                            "results": [
+                                {
+                                    "toolCallId":"",
+                                    "result":"Reserva creada"
+                                }
+                            ]
+                        });
                     }
                 });
             }
             else {
                 console.log("NO HAY MESAS DISPONIBLES")
-                res.json('No hay mesas disponibles para la fecha seleccionada');
+                res.json({
+                    "results": [
+                        {
+                            "toolCallId":"",
+                            "result":"No hay mesas disponibles para la fecha seleccionada"
+                        }
+                    ]
+                });
             }
         })
     });
@@ -180,7 +228,14 @@ router.post('/createTable', (req, res) => {
             console.error(err);
             res.status(500).json('Error creating table');
         } else {
-            res.json('Table created');
+            res.json({
+                "results": [
+                    {
+                        "toolCallId":"",
+                        "result":"Mesa creada"
+                    }
+                ]
+            });
         }
     });
 });
@@ -205,13 +260,27 @@ router.post('/checkName', (req, res) => {
             const overlap = possibleNames.filter(name => turnNames.includes(name));
             console.log("overlap",overlap);
             if (overlap.length > 1){
-                res.json({overlap: overlap, turns: [], usesTurns: 0, fixedName: responsibleName});
+                res.json({
+                    "results": [
+                        {
+                            "toolCallId":"",
+                            "result":{overlap: overlap, turns: [], usesTurns: 0, fixedName: responsibleName}
+                        }
+                    ]
+                });
                 return;
             }
             else{
                 const turnsFromName = futureTurns.filter(turn => turn.responsibleName.toLowerCase().normalize().includes(possibleNames[0]));
                 const turnHours = turnsFromName.map(turn => new Date(turn.fromHour).toISOString());
-                res.json({overlap: [], turns: turnHours, usesTurns: 1, fixedName: possibleNames[0]});
+                res.json({
+                    "results": [
+                        {
+                            "toolCallId":"",
+                            "result":{overlap: [], turns: turnHours, usesTurns: turnsFromName.length, fixedName: responsibleName}
+                        }
+                    ]
+                });
             }
         }
     });
