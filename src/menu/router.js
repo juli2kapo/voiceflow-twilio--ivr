@@ -60,6 +60,8 @@ router.post('/getTurns', (req, res) => {
 });
 
 router.post('/getAvailableTurns', (req, res) => {
+    console.log("body",req.body)
+
     const { startDate, endDate, amountOfPeople } = req.body;
     const tablesQuery = `SELECT * FROM tables WHERE seats >= ?`;
     const turnsQuery = `SELECT * FROM turns`;
@@ -120,6 +122,7 @@ router.post('/deleteTurns', (req, res) => {
 
 router.post('/createTurns', (req, res) => {
     const { startDate, endDate, amountOfPeople, responsibleName } = req.body;
+    console.log("body",req.body)
     const fechaInicio = new Date(startDate);
     const fechaFin = new Date(endDate);
     const tablesQuery = `SELECT * FROM tables WHERE seats >= ?`;
