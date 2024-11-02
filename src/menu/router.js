@@ -29,7 +29,7 @@ const workHours = [
 
 
 router.post('/getAllTurns', (req, res) => {
-    const { startDate, endDate } = req.body;
+    const { startDate, endDate }  = req.body.message.toolCalls[0].function.arguments;
     const fechaInicio = new Date(startDate);
     const fechaFin = new Date(endDate);
     const query = `SELECT * FROM turns`;
@@ -44,7 +44,7 @@ router.post('/getAllTurns', (req, res) => {
 });
 
 router.post('/getTurns', (req, res) => {
-    const { startDate, endDate } = req.body;
+    const { startDate, endDate }  = req.body.message.toolCalls[0].function.arguments;
     const fechaInicio = new Date(startDate);
     const fechaFin = new Date(endDate);
     const query = `SELECT * FROM turns`;
@@ -62,7 +62,7 @@ router.post('/getTurns', (req, res) => {
 router.post('/getAvailableTurns', (req, res) => {
     console.log("body",req.body)
 
-    const { startDate, endDate, amountOfPeople } = req.body;
+    const { startDate, endDate, amountOfPeople }  = req.body.message.toolCalls[0].function.arguments;
     const tablesQuery = `SELECT * FROM tables WHERE seats >= ?`;
     const turnsQuery = `SELECT * FROM turns`;
     const fechaInicio = new Date(startDate);
@@ -106,7 +106,7 @@ router.post('/getAvailableTurns', (req, res) => {
 });
 
 router.post('/deleteTurns', (req, res) => {
-    const { startDate, endDate, responsibleName } = req.body;
+    const { startDate, endDate, responsibleName }  = req.body.message.toolCalls[0].function.arguments;
     const fechaInicio = new Date(startDate);
     const fechaFin = new Date(endDate);
     const query = `DELETE FROM turns WHERE fromHour == ? AND toHour == ? AND responsibleName = ?`;
@@ -121,9 +121,8 @@ router.post('/deleteTurns', (req, res) => {
 });
 
 router.post('/createTurns', (req, res) => {
-    const { startDate, endDate, amountOfPeople, responsibleName } = req.body;
-    console.log("message.toolCalls",req.body.message.toolCalls)
-    console.log("message.toolCalls.function",req.body.message.toolCalls[0].function)
+    const { startDate, endDate, amountOfPeople, responsibleName }  = req.body.message.toolCalls[0].function.arguments;
+    console.log("PARAMS",req.body.message.toolCalls[0].function.arguments)
     const fechaInicio = new Date(startDate);
     const fechaFin = new Date(endDate);
     const tablesQuery = `SELECT * FROM tables WHERE seats >= ?`;
@@ -171,7 +170,7 @@ router.post('/createTurns', (req, res) => {
 
 router.post('/createTable', (req, res) => {
     console.log(req.body)
-    const { name, seats } = req.body;
+    const { name, seats }  = req.body.message.toolCalls[0].function.arguments;
     const insertTableQuery = `INSERT INTO tables (name, seats, status, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?)`;
     db.run(insertTableQuery, [name, seats, 'available', new Date(), new Date()], (err) => {
         if (err) {
@@ -186,7 +185,7 @@ router.post('/createTable', (req, res) => {
 
 
 router.post('/checkName', (req, res) => {
-    const { responsibleName } = req.body;
+    const { responsibleName }  = req.body.message.toolCalls[0].function.arguments;
     const possibleNames = responsibleName.toLowerCase().normalize().split(' ');
     console.log("possibleNames",possibleNames);
     const query = `SELECT * FROM turns`;
