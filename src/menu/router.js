@@ -162,8 +162,8 @@ router.post('/createTurns', (req, res) => {
     const { startDate, endDate, amountOfPeople, responsibleName }  = req.body.message.toolCalls[0].function.arguments;
     console.log("callId",req.body.message.toolCalls[0]);
     const {callId} = req.body.message.toolCalls[0].id;
+    console.log("callId2",callId)
     console.log("PARAMS",req.body.message.toolCalls[0].function.arguments)
-    console.log("coso", req.body.message)
     const fechaInicio = new Date(startDate);
     const fechaFin = new Date(endDate);
     const tablesQuery = `SELECT * FROM tables WHERE seats >= ?`;
