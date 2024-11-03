@@ -30,6 +30,7 @@ const workHours = [
 
 router.post('/getAllTurns', (req, res) => {
     const { startDate, endDate }  = req.body.message.toolCalls[0].function.arguments;
+    const {callId} = req.body.message.toolCalls[0].id;
     const fechaInicio = new Date(startDate);
     const fechaFin = new Date(endDate);
     const query = `SELECT * FROM turns`;
@@ -42,7 +43,7 @@ router.post('/getAllTurns', (req, res) => {
                 {
                 "results": [
                     {
-                        "toolCallId":"",
+                        "toolCallId":callId,
                         "result":results
                     }
                 ]
@@ -54,6 +55,7 @@ router.post('/getAllTurns', (req, res) => {
 
 router.post('/getTurns', (req, res) => {
     const { startDate, endDate }  = req.body.message.toolCalls[0].function.arguments;
+    const {callId} = req.body.message.toolCalls[0].id;
     const fechaInicio = new Date(startDate);
     const fechaFin = new Date(endDate);
     const query = `SELECT * FROM turns`;
@@ -69,7 +71,7 @@ router.post('/getTurns', (req, res) => {
                 {
                     "results": [
                         {
-                            "toolCallId":"",
+                            "toolCallId":callId,
                             "result":possibleTurns
                         }
                     ]
@@ -83,6 +85,7 @@ router.post('/getAvailableTurns', (req, res) => {
     console.log("body",req.body)
 
     const { startDate, endDate, amountOfPeople }  = req.body.message.toolCalls[0].function.arguments;
+    const {callId} = req.body.message.toolCalls[0].id;
     const tablesQuery = `SELECT * FROM tables WHERE seats >= ?`;
     const turnsQuery = `SELECT * FROM turns`;
     const fechaInicio = new Date(startDate);
@@ -123,7 +126,7 @@ router.post('/getAvailableTurns', (req, res) => {
             res.json({
                 "results": [
                     {
-                        "toolCallId":"",
+                        "toolCallId":callId,
                         "result":availableHours
                     }
                 ]
@@ -134,6 +137,7 @@ router.post('/getAvailableTurns', (req, res) => {
 
 router.post('/deleteTurns', (req, res) => {
     const { startDate, endDate, responsibleName }  = req.body.message.toolCalls[0].function.arguments;
+    const {callId} = req.body.message.toolCalls[0].id;
     const fechaInicio = new Date(startDate);
     const fechaFin = new Date(endDate);
     const query = `DELETE FROM turns WHERE fromHour == ? AND toHour == ? AND responsibleName = ?`;
@@ -145,7 +149,7 @@ router.post('/deleteTurns', (req, res) => {
             res.json({
                 "results": [
                     {
-                        "toolCallId":"",
+                        "toolCallId":callId,
                         "result":"Turns deleted"
                     }
                 ]
@@ -156,6 +160,7 @@ router.post('/deleteTurns', (req, res) => {
 
 router.post('/createTurns', (req, res) => {
     const { startDate, endDate, amountOfPeople, responsibleName }  = req.body.message.toolCalls[0].function.arguments;
+    const {callId} = req.body.message.toolCalls[0].id;
     console.log("PARAMS",req.body.message.toolCalls[0].function.arguments)
     console.log("coso", req.body.message)
     const fechaInicio = new Date(startDate);
@@ -198,7 +203,7 @@ router.post('/createTurns', (req, res) => {
                         res.json({
                             "results": [
                                 {
-                                    "toolCallId":"",
+                                    "toolCallId":callId,
                                     "result":"Reserva creada"
                                 }
                             ]
@@ -211,7 +216,7 @@ router.post('/createTurns', (req, res) => {
                 console.log(JSON.stringify({
                     "results": [
                         {
-                            "toolCallId":"",
+                            "toolCallId":callId,
                             "result":"No hay mesas disponibles para la fecha seleccionada"
                         }
                     ]
@@ -219,7 +224,7 @@ router.post('/createTurns', (req, res) => {
                 res.json({
                     "results": [
                         {
-                            "toolCallId":"",
+                            "toolCallId":callId,
                             "result":"No hay mesas disponibles para la fecha seleccionada"
                         }
                     ]
@@ -233,6 +238,7 @@ router.post('/createTurns', (req, res) => {
 router.post('/createTable', (req, res) => {
     console.log(req.body)
     const { name, seats }  = req.body.message.toolCalls[0].function.arguments;
+    const {callId} = req.body.message.toolCalls[0].id;
     const insertTableQuery = `INSERT INTO tables (name, seats, status, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?)`;
     db.run(insertTableQuery, [name, seats, 'available', new Date(), new Date()], (err) => {
         if (err) {
@@ -242,7 +248,7 @@ router.post('/createTable', (req, res) => {
             res.json({
                 "results": [
                     {
-                        "toolCallId":"",
+                        "toolCallId":callId,
                         "result":"Mesa creada"
                     }
                 ]
@@ -255,6 +261,7 @@ router.post('/createTable', (req, res) => {
 
 router.post('/checkName', (req, res) => {
     const { responsibleName }  = req.body.message.toolCalls[0].function.arguments;
+    const {callId} = req.body.message.toolCalls[0].id;
     const possibleNames = responsibleName.toLowerCase().normalize().split(' ');
     console.log("possibleNames",possibleNames);
     const query = `SELECT * FROM turns`;
@@ -274,7 +281,7 @@ router.post('/checkName', (req, res) => {
                 res.json({
                     "results": [
                         {
-                            "toolCallId":"",
+                            "toolCallId":callId,
                             "result":{overlap: overlap, turns: [], usesTurns: 0, fixedName: responsibleName}
                         }
                     ]
@@ -287,7 +294,7 @@ router.post('/checkName', (req, res) => {
                 res.json({
                     "results": [
                         {
-                            "toolCallId":"",
+                            "toolCallId":callId,
                             "result":{overlap: [], turns: turnHours, usesTurns: turnsFromName.length, fixedName: responsibleName}
                         }
                     ]
