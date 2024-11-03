@@ -160,6 +160,7 @@ router.post('/deleteTurns', (req, res) => {
 
 router.post('/createTurns', (req, res) => {
     const { startDate, endDate, amountOfPeople, responsibleName }  = req.body.message.toolCalls[0].function.arguments;
+    console.log("callId",req.body.message.toolCalls[0]);
     const {callId} = req.body.message.toolCalls[0].id;
     console.log("PARAMS",req.body.message.toolCalls[0].function.arguments)
     console.log("coso", req.body.message)
