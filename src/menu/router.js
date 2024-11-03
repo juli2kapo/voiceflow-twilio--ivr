@@ -161,7 +161,7 @@ router.post('/deleteTurns', (req, res) => {
 router.post('/createTurns', (req, res) => {
     const { startDate, endDate, amountOfPeople, responsibleName }  = req.body.message.toolCalls[0].function.arguments;
     console.log("body",req.body);
-    const {callId} = req.body.message.toolCalls[0].id;
+    const {callId} = req.body.message.call.id;
     console.log("callId2",callId)
     console.log("PARAMS",req.body.message.toolCalls[0].function.arguments)
     const fechaInicio = new Date(startDate);
