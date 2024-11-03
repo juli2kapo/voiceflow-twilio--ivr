@@ -161,7 +161,8 @@ router.post('/deleteTurns', (req, res) => {
 router.post('/createTurns', (req, res) => {
     const { startDate, endDate, amountOfPeople, responsibleName }  = req.body.message.toolCalls[0].function.arguments;
     console.log("body",req.body);
-    console.log("body.message.call",JSON.parse(req.body.message.call));
+    console.log("body.message.call",req.body.message.call.id);
+    console.log("body.message.call.id",JSON.parse(req.body.message.call).id);
     const {callId} = req.body.message.call.id;
     console.log("callId2",callId)
     console.log("PARAMS",req.body.message.toolCalls[0].function.arguments)
