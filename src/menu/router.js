@@ -157,6 +157,7 @@ router.post('/deleteTurns', (req, res) => {
 router.post('/createTurns', (req, res) => {
     const { startDate, endDate, amountOfPeople, responsibleName }  = req.body.message.toolCalls[0].function.arguments;
     console.log("PARAMS",req.body.message.toolCalls[0].function.arguments)
+    console.log("coso", req.body.message)
     const fechaInicio = new Date(startDate);
     const fechaFin = new Date(endDate);
     const tablesQuery = `SELECT * FROM tables WHERE seats >= ?`;
@@ -192,6 +193,8 @@ router.post('/createTurns', (req, res) => {
                         console.error(err);
                         res.status(500).json('Error creating turn');
                     } else {
+
+                        consoe.log()
                         res.json({
                             "results": [
                                 {
@@ -205,6 +208,14 @@ router.post('/createTurns', (req, res) => {
             }
             else {
                 console.log("NO HAY MESAS DISPONIBLES")
+                console.log(JSON.stringify({
+                    "results": [
+                        {
+                            "toolCallId":"",
+                            "result":"No hay mesas disponibles para la fecha seleccionada"
+                        }
+                    ]
+                }))
                 res.json({
                     "results": [
                         {
@@ -338,7 +349,14 @@ router.get('/deleteAllTurns', (req, res) => {
             console.error(err);
             res.status(500).json('Error deleting all turns');
         } else {
-            res.json('All turns deleted');
+            res.json({
+                "results": [
+                    {
+                        "toolCallId":"",
+                        "result":"All turns deleted"
+                    }
+                ]
+            });
         }
     });
 });
