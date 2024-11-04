@@ -220,6 +220,7 @@ router.post('/createTurns', (req, res) => {
                     return acc.concat(turns.filter(turn => turn.table_id === element.id));
                 }, []);
                 console.log("takenTurnsForDay",takenTurnsForDay)
+                console.log("possibleHours",possibleHours)
                 const temp = possibleHours.filter(hour => {
                     return takenTurnsForDay.filter(turn => new Date(turn.fromHour).getHours() == hour).length < sortedTables.length;
                 });
