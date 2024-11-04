@@ -335,14 +335,21 @@ router.post('/checkName', (req, res) => {
             
             let futureTurns = results.filter(turn => new Date(turn.fromHour).getTime() >= new Date().getTime());
             
-            const turnNames = futureTurns.map(turn => turn.responsibleName.toLowerCase().normalize());
-            const overlap = possibleNames.filter(name => turnNames.includes(name));
+            //get all turns that overlap with the name
+            const overlap = futureTurns.filter(turn => {
+                const turnNames = turn.responsibleName.toLowerCase().normalize().split(' ');
+                return turnNames.some(name => possibleNames.includes(name));
+            });
+
+
+            // const turnsFromName = futureTurns.filter(turn => turn.responsibleName.toLowerCase().normalize().includes(possibleNames[0]));
+            //     const turnHours = turnsFromName.map(turn => new Date(turn.fromHour).toISOString());
             if (overlap.length > 1){
                 res.json({
                     "results": [
                         {
                             "toolCallId":callId,
-                            "result":{overlap: overlap, turns: [], usesTurns: 0, fixedName: responsibleName}
+                            "result":"There are more than one possible turns with variants of the name: " + JSON.stringify(overlap)
                         }
                     ]
                 });
@@ -351,14 +358,28 @@ router.post('/checkName', (req, res) => {
             else{
                 const turnsFromName = futureTurns.filter(turn => turn.responsibleName.toLowerCase().normalize().includes(possibleNames[0]));
                 const turnHours = turnsFromName.map(turn => new Date(turn.fromHour).toISOString());
-                res.json({
-                    "results": [
-                        {
-                            "toolCallId":callId,
-                            "result":{overlap: [], turns: turnHours, usesTurns: turnsFromName.length, fixedName: responsibleName}
-                        }
-                    ]
-                });
+                if (turnsFromName.length > 0){
+
+                    res.json({
+                        "results": [
+                            {
+                                "toolCallId":callId,
+                                "result": "These are the possible turns with the given name: " + JSON.stringify(turnHours)
+                                // "result":{overlap: [], turns: turnHours, usesTurns: turnsFromName.length, fixedName: responsibleName}
+                            }
+                        ]
+                    });
+                }
+                else{
+                    res.json({
+                        "results": [
+                            {
+                                "toolCallId":callId,
+                                "result": "There are no turns with the name: " + responsibleName
+                            }
+                        ]
+                    });
+                }
             }
         }
     });
