@@ -150,6 +150,7 @@ router.post('/deleteTurns', (req, res) => {
 router.post('/createTurns', (req, res) => {
     const { startDate, endDate, amountOfPeople, responsibleName }  = req.body.message.toolCalls[0].function.arguments;
     const callId = req.body.message.toolCalls[0].id;
+    console.log("PARAMS", req.body.message.toolCalls[0].function.arguments)
     const fechaInicio = new Date(startDate);
     const fechaFin = new Date(endDate);
     const tablesQuery = `SELECT * FROM tables WHERE seats >= ?`;
@@ -168,7 +169,7 @@ router.post('/createTurns', (req, res) => {
                 return;
             }
             const turns = results.filter(x=>new Date(x.fromHour).getTime() >= new Date(fechaInicio).getTime() && new Date(x.toHour).getTime() <= new Date(fechaFin).getTime());
-
+            console.log("tables",tables)
             const sortedTables = tables.filter(table =>
                 turns.filter(
                     turn=>new Date(turn.fromHour).getTime()==new Date(fechaInicio).getTime() && turn.table_id==table.id
