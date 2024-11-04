@@ -28,7 +28,7 @@ const workHours = [
 ];
 
 
-router.post('/getAllTurns', (req, res) => {
+router.get('/getAllTurns', (req, res) => {
     const { startDate, endDate }  = req.body.message.toolCalls[0].function.arguments;
     const callId = req.body.message.toolCalls[0].id;
     const fechaInicio = new Date(startDate);
