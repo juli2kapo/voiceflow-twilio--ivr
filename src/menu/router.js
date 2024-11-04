@@ -161,7 +161,7 @@ router.post('/createTurns', (req, res) => {
             return;
         }
 
-        db.all(turnsQuery, async (err, results) => {
+        db.all(turnsQuery, (err, results) => {
             if(err) {
                 console.error(err);
                 res.status(500).json('Error fetching turns');
@@ -185,7 +185,11 @@ router.post('/createTurns', (req, res) => {
                             "results": [
                                 {
                                     "toolCallId":callId,
-                                    "result":"Reserva creada"
+                                    "result":{
+                                        "result":"Reserva creada",
+                                        "availableHours":[]
+                                    },
+                                    
                                 }
                             ]
                         });
@@ -196,52 +200,49 @@ router.post('/createTurns', (req, res) => {
 
 
 
-                const allPossibleTurns = [];
-                    for (let hour = 10; hour <= 23; hour++) {
-                        const newStart = new Date(fechaInicio);
-                        newStart.setHours(hour);
-                        const newEnd = new Date(newStart);
-                        newEnd.setHours(hour + (fechaFin.getHours() - fechaInicio.getHours())); // Adjust duration
+                const reSortedTables = tables.sort((a, b) => a.seats - b.seats);
 
-                        const availableTables = await new Promise((resolve, reject) => {
-                            db.all(tablesQuery, [amountOfPeople], (err, availableTables) => {
-                                if (err) {
-                                    return reject(err);
-                                }
-                                resolve(availableTables);
-                            });
-                        });
 
-                        const takenTurns = results.filter(turn =>
-                            new Date(turn.fromHour).getTime() >= newStart.getTime() && 
-                            new Date(turn.toHour).getTime() <= newEnd.getTime()
-                        );
+                const horaBuscada = fechaInicio.getHours();
+                // +-1 and +-2
+                const possibleHours = [(horaBuscada - 2).toString(), (horaBuscada - 1).toString(), (horaBuscada + 1).toString(), (horaBuscada + 2).toString()];
 
-                        const availableSortedTables = availableTables.filter(table =>
-                            takenTurns.filter(turn => turn.table_id == table.id).length == 0
-                        );
-
-                        if (availableSortedTables.length > 0) {
-                            allPossibleTurns.push({
-                                start: newStart.toISOString(),
-                                end: newEnd.toISOString()
-                            });
-                        }
-                    }
-
+                const takenTurnsForDay = reSortedTables.reduce((acc, element) => {
+                    return acc.concat(turns.filter(turn => turn.table_id === element.id));
+                }, []);
+                console.log("takenTurnsForDay",takenTurnsForDay)
+                const temp = possibleHours.filter(hour => {
+                    return takenTurnsForDay.filter(turn => new Date(turn.fromHour).getHours() == hour).length < sortedTables.length;
+                });
+                const availableHours = temp.slice(0, 3)
+                if(availableHours.length > 0){
                     res.json({
                         "results": [
                             {
-                                "toolCallId": callId,
-                                "result": "No hay mesas disponibles para la fecha seleccionada",
-                                "possibleTurns": allPossibleTurns
+                                "toolCallId":callId,
+                                "result":{
+                                    "result":"No hay mesas disponibles para la hora seleccionada",
+                                    "availableHours":availableHours
+                                }
                             }
                         ]
                     });
-
-
+                }
 
                 
+                else{
+                    res.json({
+                        "results": [
+                            {
+                                "toolCallId":callId,
+                                "result":{
+                                    "result":"No hay mesas disponibles para la fecha seleccionada, probar con otra fecha",
+                                    "availableHours":[]
+                                }
+                            }
+                        ]
+                    });
+                }
             }
         })
     });
