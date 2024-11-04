@@ -29,6 +29,7 @@ const workHours = [
 
 
 router.get('/getAllTurns', (req, res) => {
+    // const callId = req.body.message.toolCalls[0].id;
     const query = `SELECT * FROM turns`;
     db.all(query, (err, results) => {
         if (err) {
@@ -39,7 +40,7 @@ router.get('/getAllTurns', (req, res) => {
                 {
                 "results": [
                     {
-                        "toolCallId":callId,
+                        // "toolCallId":callId,
                         "result":results
                     }
                 ]
