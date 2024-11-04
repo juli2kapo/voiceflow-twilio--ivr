@@ -69,7 +69,7 @@ router.post('/getTurns', (req, res) => {
                     "results": [
                         {
                             "toolCallId":callId,
-                            "result":possibleTurns
+                            "result":JSON.stringify(possibleTurns)
                         }
                     ]
                     }
@@ -113,7 +113,7 @@ router.post('/getAvailableTurns', (req, res) => {
                 "results": [
                     {
                         "toolCallId":callId,
-                        "result":availableHours
+                        "result":JSON.stringify(availableHours)
                     }
                 ]
                 });
@@ -186,7 +186,7 @@ router.post('/createTurns', (req, res) => {
                                     "toolCallId":callId,
                                     "result":{
                                         "result":"Reserva creada",
-                                        "availableHours":[]
+                                        "availableHours":JSON.stringify([])
                                     },
                                     
                                 }
@@ -221,7 +221,7 @@ router.post('/createTurns', (req, res) => {
                                 "toolCallId":callId,
                                 "result":{
                                     "result":"No hay mesas disponibles para la hora seleccionada",
-                                    "availableHours":availableHours
+                                    "availableHours":JSON.stringify(availableHours)
                                 }
                             }
                         ]
@@ -236,7 +236,7 @@ router.post('/createTurns', (req, res) => {
                                 "toolCallId":callId,
                                 "result":{
                                     "result":"No hay mesas disponibles para la fecha seleccionada, probar con otra fecha",
-                                    "availableHours":[]
+                                    "availableHours":JSON.stringify([])
                                 }
                             }
                         ]
@@ -281,7 +281,7 @@ router.get('/getAllTables', (req, res) => {
                 "results": [
                     {
                         "toolCallId":"",
-                        "result":results
+                        "result":JSON.stringify(results)
                     }
                 ]
             });
@@ -309,7 +309,7 @@ router.post('/checkName', (req, res) => {
                     "results": [
                         {
                             "toolCallId":callId,
-                            "result":{overlap: overlap, turns: [], usesTurns: 0, fixedName: responsibleName}
+                            "result":JSON.stringify({overlap: overlap, turns: [], usesTurns: 0, fixedName: responsibleName})
                         }
                     ]
                 });
@@ -322,7 +322,7 @@ router.post('/checkName', (req, res) => {
                     "results": [
                         {
                             "toolCallId":callId,
-                            "result":{overlap: [], turns: turnHours, usesTurns: turnsFromName.length, fixedName: responsibleName}
+                            "result":JSON.stringify({overlap: [], turns: turnHours, usesTurns: turnsFromName.length, fixedName: responsibleName})
                         }
                     ]
                 });
