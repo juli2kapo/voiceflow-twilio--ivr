@@ -29,10 +29,6 @@ const workHours = [
 
 
 router.get('/getAllTurns', (req, res) => {
-    const { startDate, endDate }  = req.body.message.toolCalls[0].function.arguments;
-    const callId = req.body.message.toolCalls[0].id;
-    const fechaInicio = new Date(startDate);
-    const fechaFin = new Date(endDate);
     const query = `SELECT * FROM turns`;
     db.all(query, (err, results) => {
         if (err) {
