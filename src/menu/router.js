@@ -82,7 +82,6 @@ router.post('/getTurns', (req, res) => {
 });
 
 router.post('/getAvailableTurns', (req, res) => {
-    console.log("body",req.body)
 
     const { startDate, endDate, amountOfPeople }  = req.body.message.toolCalls[0].function.arguments;
     const callId = req.body.message.toolCalls[0].id;
@@ -108,16 +107,6 @@ router.post('/getAvailableTurns', (req, res) => {
             const takenTurnsForDay = sortedTables.reduce((acc, element) => {
                 return acc.concat(turns.filter(turn => turn.table_id === element.id));
             }, []);
-
-            console.log("takenTurnsForDay",takenTurnsForDay)
-            console.log("turns",turns)
-            if(turns.length > 0){
-
-                console.log("turns",turns)
-                console.log("new Date(turn.fromHour).getHours()",new Date(turns[0].fromHour).getHours())
-                
-                
-            }
             const temp = workHours.filter(hour => {
                 return takenTurnsForDay.filter(turn => new Date(turn.fromHour).getHours() == hour).length < sortedTables.length;
             });
@@ -160,11 +149,7 @@ router.post('/deleteTurns', (req, res) => {
 
 router.post('/createTurns', (req, res) => {
     const { startDate, endDate, amountOfPeople, responsibleName }  = req.body.message.toolCalls[0].function.arguments;
-    console.log("body",req.body);
-    console.log("body.message.call",req.body.message.toolCalls[0].id);
     const callId = req.body.message.toolCalls[0].id;
-    console.log("callId2",callId)
-    console.log("PARAMS",req.body.message.toolCalls[0].function.arguments)
     const fechaInicio = new Date(startDate);
     const fechaFin = new Date(endDate);
     const tablesQuery = `SELECT * FROM tables WHERE seats >= ?`;
@@ -176,32 +161,26 @@ router.post('/createTurns', (req, res) => {
             return;
         }
 
-        db.all(turnsQuery, (err, results) => {
+        db.all(turnsQuery, async (err, results) => {
             if(err) {
                 console.error(err);
                 res.status(500).json('Error fetching turns');
                 return;
             }
             const turns = results.filter(x=>new Date(x.fromHour).getTime() >= new Date(fechaInicio).getTime() && new Date(x.toHour).getTime() <= new Date(fechaFin).getTime());
-            console.log("turns",turns)
-            console.log("testFechaInicio",new Date(fechaInicio).getTime())
-            console.log("fechaInicio",fechaInicio)
+
             const sortedTables = tables.filter(table =>
                 turns.filter(
                     turn=>new Date(turn.fromHour).getTime()==new Date(fechaInicio).getTime() && turn.table_id==table.id
                 ).length==0
             ).sort((a, b) => a.seats - b.seats);
-            console.log("sortedTables",sortedTables)
             if(sortedTables && sortedTables.length > 0) {
-                console.log("ME DEJO ENTRAR, HAY MESAS")
                 const insertQuery = `INSERT INTO turns (amountOfPeople, table_id, fromHour, toHour, responsibleName) VALUES (?, ?, ?, ?, ?)`;
                 db.run(insertQuery, [amountOfPeople, sortedTables[0].id, fechaInicio, fechaFin, responsibleName], (err) => {
                     if (err) {
                         console.error(err);
                         res.status(500).json('Error creating turn');
                     } else {
-
-                        consoe.log()
                         res.json({
                             "results": [
                                 {
@@ -214,23 +193,55 @@ router.post('/createTurns', (req, res) => {
                 });
             }
             else {
-                console.log("NO HAY MESAS DISPONIBLES")
-                console.log(JSON.stringify({
-                    "results": [
-                        {
-                            "toolCallId":callId,
-                            "result":"No hay mesas disponibles para la fecha seleccionada"
+
+
+
+                const allPossibleTurns = [];
+                    for (let hour = 10; hour <= 23; hour++) {
+                        const newStart = new Date(fechaInicio);
+                        newStart.setHours(hour);
+                        const newEnd = new Date(newStart);
+                        newEnd.setHours(hour + (fechaFin.getHours() - fechaInicio.getHours())); // Adjust duration
+
+                        const availableTables = await new Promise((resolve, reject) => {
+                            db.all(tablesQuery, [amountOfPeople], (err, availableTables) => {
+                                if (err) {
+                                    return reject(err);
+                                }
+                                resolve(availableTables);
+                            });
+                        });
+
+                        const takenTurns = results.filter(turn =>
+                            new Date(turn.fromHour).getTime() >= newStart.getTime() && 
+                            new Date(turn.toHour).getTime() <= newEnd.getTime()
+                        );
+
+                        const availableSortedTables = availableTables.filter(table =>
+                            takenTurns.filter(turn => turn.table_id == table.id).length == 0
+                        );
+
+                        if (availableSortedTables.length > 0) {
+                            allPossibleTurns.push({
+                                start: newStart.toISOString(),
+                                end: newEnd.toISOString()
+                            });
                         }
-                    ]
-                }))
-                res.json({
-                    "results": [
-                        {
-                            "toolCallId":callId,
-                            "result":"No hay mesas disponibles para la fecha seleccionada"
-                        }
-                    ]
-                });
+                    }
+
+                    res.json({
+                        "results": [
+                            {
+                                "toolCallId": callId,
+                                "result": "No hay mesas disponibles para la fecha seleccionada",
+                                "possibleTurns": allPossibleTurns
+                            }
+                        ]
+                    });
+
+
+
+                
             }
         })
     });
@@ -238,7 +249,6 @@ router.post('/createTurns', (req, res) => {
 
 
 router.post('/createTable', (req, res) => {
-    console.log(req.body)
     const { name, seats }  = req.body.message.toolCalls[0].function.arguments;
     const callId = req.body.message.toolCalls[0].id;
     const insertTableQuery = `INSERT INTO tables (name, seats, status, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?)`;
@@ -265,7 +275,6 @@ router.post('/checkName', (req, res) => {
     const { responsibleName }  = req.body.message.toolCalls[0].function.arguments;
     const callId = req.body.message.toolCalls[0].id;
     const possibleNames = responsibleName.toLowerCase().normalize().split(' ');
-    console.log("possibleNames",possibleNames);
     const query = `SELECT * FROM turns`;
     db.all(query, (err, results) => {
         if (err) {
@@ -276,9 +285,7 @@ router.post('/checkName', (req, res) => {
             let futureTurns = results.filter(turn => new Date(turn.fromHour).getTime() >= new Date().getTime());
             
             const turnNames = futureTurns.map(turn => turn.responsibleName.toLowerCase().normalize());
-            console.log("turnNames",turnNames);
             const overlap = possibleNames.filter(name => turnNames.includes(name));
-            console.log("overlap",overlap);
             if (overlap.length > 1){
                 res.json({
                     "results": [
@@ -337,7 +344,6 @@ router.get("/createMP3",(req,res)=>{
           const filePath = outputName
     
           fs.writeFileSync(filePath, buffer); // Save the buffer as an MP3 file
-          console.log(`Audio saved to ${filePath}`);
     
         } catch (err) {
           console.error('Error:', err); // Catch and log any errors
