@@ -223,7 +223,8 @@ router.post('/createTurns', (req, res) => {
                 const temp = possibleHours.filter(hour => {
                     return takenTurnsForDay.filter(turn => new Date(turn.fromHour).getHours() == hour).length < sortedTables.length;
                 });
-                const availableHours = temp.slice(0, 3)
+                console.log("temp",temp)
+                // const availableHours = temp.slice(0, 3)
                 if(availableHours.length > 0){
                     // res.json({
                     //     "results": [
