@@ -221,11 +221,12 @@ router.post('/createTurns', (req, res) => {
                 }, []);
                 console.log("takenTurnsForDay",takenTurnsForDay)
                 console.log("possibleHours",possibleHours)
+                console.log("reSortedTables",reSortedTables)
                 const temp = possibleHours.filter(hour => {
-                    return takenTurnsForDay.filter(turn => new Date(turn.fromHour).getHours() == hour).length < sortedTables.length;
+                    return takenTurnsForDay.filter(turn => new Date(turn.fromHour).getHours() == hour).length < reSortedTables.length;
                 });
                 console.log("temp",temp)
-                // const availableHours = temp.slice(0, 3)
+                const availableHours = temp.slice(0, 3)
                 if(availableHours.length > 0){
                     // res.json({
                     //     "results": [
