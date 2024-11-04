@@ -273,6 +273,24 @@ router.post('/createTable', (req, res) => {
 });
 
 
+router.get('/getAllTables', (req, res) => {
+    const query = `SELECT * FROM tables`;
+    db.all(query, (err, results) => {
+        if (err) {
+            console.error(err);
+            res.status(500).json('Error fetching tables');
+        } else {
+            res.json({
+                "results": [
+                    {
+                        "toolCallId":"",
+                        "result":results
+                    }
+                ]
+            });
+        }
+    });
+})
 
 router.post('/checkName', (req, res) => {
     const { responsibleName }  = req.body.message.toolCalls[0].function.arguments;
