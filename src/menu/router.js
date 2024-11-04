@@ -69,7 +69,7 @@ router.post('/getTurns', (req, res) => {
                     "results": [
                         {
                             "toolCallId":callId,
-                            "result":JSON.stringify(possibleTurns)
+                            "result":possibleTurns
                         }
                     ]
                     }
@@ -113,7 +113,7 @@ router.post('/getAvailableTurns', (req, res) => {
                 "results": [
                     {
                         "toolCallId":callId,
-                        "result":JSON.stringify(availableHours)
+                        "result":availableHours
                     }
                 ]
                 });
@@ -180,18 +180,28 @@ router.post('/createTurns', (req, res) => {
                         console.error(err);
                         res.status(500).json('Error creating turn');
                     } else {
+                        // res.json({
+                        //     "results": [
+                        //         {
+                        //             "toolCallId":callId,
+                        //             "result":{
+                        //                 "result":"Reserva creada",
+                        //                 "availableHours":[]
+                        //             },
+                                    
+                        //         }
+                        //     ]
+                        // });
+
+
                         res.json({
                             "results": [
                                 {
                                     "toolCallId":callId,
-                                    "result":{
-                                        "result":"Reserva creada",
-                                        "availableHours":JSON.stringify([])
-                                    },
-                                    
+                                    "result":"Reserva creada"
                                 }
                             ]
-                        });
+                        })
                     }
                 });
             }
@@ -215,32 +225,52 @@ router.post('/createTurns', (req, res) => {
                 });
                 const availableHours = temp.slice(0, 3)
                 if(availableHours.length > 0){
+                    // res.json({
+                    //     "results": [
+                    //         {
+                    //             "toolCallId":callId,
+                    //             "result":{
+                    //                 "result":"No hay mesas disponibles para la hora seleccionada",
+                    //                 "availableHours":availableHours
+                    //             }
+                    //         }
+                    //     ]
+                    // });
+
                     res.json({
                         "results": [
                             {
                                 "toolCallId":callId,
-                                "result":{
-                                    "result":"No hay mesas disponibles para la hora seleccionada",
-                                    "availableHours":JSON.stringify(availableHours)
-                                }
+                                "result":"Horarios disponibles para esta fecha: " + JSON.stringify(availableHours)
                             }
                         ]
-                    });
+                    })
                 }
 
                 
                 else{
+
+
                     res.json({
                         "results": [
                             {
                                 "toolCallId":callId,
-                                "result":{
-                                    "result":"No hay mesas disponibles para la fecha seleccionada, probar con otra fecha",
-                                    "availableHours":JSON.stringify([])
-                                }
+                                "result":"No hay mesas disponibles para la fecha seleccionada, probar con otra fecha"
                             }
                         ]
-                    });
+                    })
+
+                    // res.json({
+                    //     "results": [
+                    //         {
+                    //             "toolCallId":callId,
+                    //             "result":{
+                    //                 "result":"No hay mesas disponibles para la fecha seleccionada, probar con otra fecha",
+                    //                 "availableHours":[]
+                    //             }
+                    //         }
+                    //     ]
+                    // });
                 }
             }
         })
@@ -281,7 +311,7 @@ router.get('/getAllTables', (req, res) => {
                 "results": [
                     {
                         "toolCallId":"",
-                        "result":JSON.stringify(results)
+                        "result":results
                     }
                 ]
             });
@@ -309,7 +339,7 @@ router.post('/checkName', (req, res) => {
                     "results": [
                         {
                             "toolCallId":callId,
-                            "result":JSON.stringify({overlap: overlap, turns: [], usesTurns: 0, fixedName: responsibleName})
+                            "result":{overlap: overlap, turns: [], usesTurns: 0, fixedName: responsibleName}
                         }
                     ]
                 });
@@ -322,7 +352,7 @@ router.post('/checkName', (req, res) => {
                     "results": [
                         {
                             "toolCallId":callId,
-                            "result":JSON.stringify({overlap: [], turns: turnHours, usesTurns: turnsFromName.length, fixedName: responsibleName})
+                            "result":{overlap: [], turns: turnHours, usesTurns: turnsFromName.length, fixedName: responsibleName}
                         }
                     ]
                 });
