@@ -174,6 +174,7 @@ router.post('/createTurns', (req, res) => {
                     turn=>new Date(turn.fromHour).getTime()==new Date(fechaInicio).getTime() && turn.table_id==table.id
                 ).length==0
             ).sort((a, b) => a.seats - b.seats);
+            console.log("sortedTables",sortedTables)
             if(sortedTables && sortedTables.length > 0) {
                 const insertQuery = `INSERT INTO turns (amountOfPeople, table_id, fromHour, toHour, responsibleName) VALUES (?, ?, ?, ?, ?)`;
                 db.run(insertQuery, [amountOfPeople, sortedTables[0].id, fechaInicio, fechaFin, responsibleName], (err) => {
